@@ -103,7 +103,7 @@ def verificar_resposta_correta():
             pontuacao_atual += 1
             label_correct.config(text=f"Acertou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
         else:
-            label_correct.config(text=f"Errou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
+            label_correct.config(text=f"Errou Miserável! A resposta correta era {list_options.get(questions[questao_index][5])}. Sua pontuação atual é de: {pontuacao_atual}")
         avancar_proxima_questao()
     else:
         label_correct.config(text="Escolha uma opção")
@@ -111,6 +111,7 @@ def verificar_resposta_correta():
 
 
 def finalizar_quiz():
+    global temporizador_ativo
     label_question.config(text="CHEGOU AO FIM")
     label_correct.config(text=f"Sua pontuação final foi de: {pontuacao_atual}")
     btn_submit.pack_forget()
@@ -122,6 +123,8 @@ def finalizar_quiz():
     label_pw.pack()
     input_pw.pack()
     btn_guardar.pack()
+    temporizador_ativo = False
+    label_timer.pack_forget()
 
 def guardar_dados():
     nome = input_nome.get()
@@ -163,7 +166,7 @@ label_timer = tk.Label(root)
 label_question = tk.Label(root, text='Question')
 list_options = tk.Listbox(root)
 
-btn_submit = tk.Button(root, text='Submit', command=verificar_resposta_correta)
+btn_submit = tk.Button(root, text='Verificar', command=verificar_resposta_correta)
 
 label_correct = tk.Label(root)
 
