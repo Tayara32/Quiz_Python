@@ -1,8 +1,9 @@
 from random import random
-
 import pandas as pd
 import tkinter as tk
 import sqlite3
+from tkinter import messagebox
+import time
 
 #CONEXÃO AO BANCO DE DADOS
 conn = sqlite3.connect('quiz.db')
@@ -35,21 +36,41 @@ cursor.execute('''
 dados = pd.read_csv('Docs/quiz-questions.csv')
 dados.to_sql('questions', conn, if_exists='replace', index=False)
 
-cursor.execute("SELECT * FROM questions ORDER BY RANDOM() LIMIT 10")
-questions = cursor.fetchall()
-conn.commit()
-conn.close()
-
 #FUNÇÕES
 
+def random_perguntas():
+    global questions
+    cursor.execute("SELECT * FROM questions ORDER BY RANDOM() LIMIT 10")
+    questions = cursor.fetchall()
+
+questions = []
 pontuacao_atual = 0
 questao_index = 0
+temporizador = 15
+temporizador_ativo = True
 
 def inicio_jogo():
-    gerar_questao()
+    global pontuacao_atual, questao_index
+    pontuacao_atual = 0
+    questao_index = 0
+    random_perguntas()
     label_question.pack(pady=10)
     list_options.pack()
     btn_submit.pack()
+    label_correct.pack_forget()
+    btn_new_game.pack_forget()
+    gerar_questao()
+    atualizar_temporizador()
+
+def atualizar_temporizador():
+    global temporizador, temporizador_ativo
+    if temporizador > 0 and temporizador_ativo:
+        label_timer.config(text=f"Segundos restantes: {temporizador}")
+        label_timer.pack()
+        temporizador -= 1
+        root.after(1000, atualizar_temporizador)
+    elif temporizador == 0:
+        avancar_proxima_questao()
 
 
 def gerar_questao():
@@ -61,6 +82,13 @@ def gerar_questao():
         list_options.insert(0, questao[1], questao[2], questao[3], questao[4])
     else:
         finalizar_quiz()
+
+def avancar_proxima_questao():
+    global questao_index, temporizador
+    questao_index += 1
+    temporizador = 15
+    atualizar_temporizador()
+    gerar_questao()
 
 def verificar_resposta_correta():
     global pontuacao_atual, questao_index
@@ -76,8 +104,7 @@ def verificar_resposta_correta():
             label_correct.config(text=f"Acertou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
         else:
             label_correct.config(text=f"Errou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
-        questao_index += 1
-        gerar_questao()
+        avancar_proxima_questao()
     else:
         label_correct.config(text="Escolha uma opção")
 
@@ -90,6 +117,38 @@ def finalizar_quiz():
     btn_new_game.pack()
     list_options.pack_forget()
     label_question.pack_forget()
+    label_nome.pack()
+    input_nome.pack()
+    label_pw.pack()
+    input_pw.pack()
+    btn_guardar.pack()
+
+def guardar_dados():
+    nome = input_nome.get()
+    pw = input_pw.get()
+
+    if nome and pw:
+        cursor.execute("SELECT * FROM users WHERE name = ? AND password = ?", (nome, pw))
+        resultado = cursor.fetchone()
+        if resultado:
+            cursor.execute("UPDATE users SET score = score + ? WHERE id = ?", (pontuacao_atual, resultado[0]))
+            conn.commit()
+            label_confirmacao.config(text="Pontuação atualizada com sucesso!", fg="green")
+        else:
+            try:
+                cursor.execute(
+                    "INSERT INTO users (name, password, score) VALUES (?, ?, ?)",
+                    (nome, pw, pontuacao_atual),
+                )
+                conn.commit()
+                label_confirmacao.config(text="Pontuação salva com sucesso!", fg="green")
+            except sqlite3.IntegrityError:
+                label_confirmacao.config(text="Erro: Nome já existe!", fg="red")
+    else:
+        label_confirmacao.config(text="Preencha todos os campos!", fg="red")
+
+    label_confirmacao.pack()
+
 
 
 #INTERFACE GRÁFICA
@@ -100,6 +159,7 @@ root.resizable(False, False)
 
 label_title = tk.Label(root, text='Quiz Genial', font=('Helvetica', 16))
 label_title.pack()
+label_timer = tk.Label(root)
 label_question = tk.Label(root, text='Question')
 list_options = tk.Listbox(root)
 
@@ -109,6 +169,12 @@ label_correct = tk.Label(root)
 
 
 btn_new_game = tk.Button(root, text='Novo Jogo', command=inicio_jogo)
+label_nome = tk.Label(root, text='Insira o seu username')
+input_nome = tk.Entry(root)
+label_pw = tk.Label(root, text='Insira uma password')
+input_pw = tk.Entry(root, show='*')
+btn_guardar = tk.Button(root, text='Guardar', command=guardar_dados)
+label_confirmacao = tk.Label(root)
 
 inicio_jogo()
 root.mainloop()
