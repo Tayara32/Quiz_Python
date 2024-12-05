@@ -45,6 +45,13 @@ conn.close()
 pontuacao_atual = 0
 questao_index = 0
 
+def inicio_jogo():
+    gerar_questao()
+    label_question.pack(pady=10)
+    list_options.pack()
+    btn_submit.pack()
+
+
 def gerar_questao():
     global pontuacao_atual, questao_index
     if questao_index < len(questions):
@@ -57,20 +64,32 @@ def gerar_questao():
 
 def verificar_resposta_correta():
     global pontuacao_atual, questao_index
-    opcao_selecionada = list_options.curselection()
-    resposta_correta = questions[questao_index][5]
-    if opcao_selecionada == resposta_correta:
-        pontuacao_atual += 1
-        label_correct.config(text=f"Acertou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
-    else:
-        label_correct.config(text=f"Errou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
 
-    questao_index += 1
-    gerar_questao()
+    label_correct.pack()
+    opcao_selecionada = list_options.curselection()
+
+    if opcao_selecionada:
+        indice_selecionado = opcao_selecionada[0]
+        resposta_correta = questions[questao_index][5]
+        if indice_selecionado == resposta_correta:
+            pontuacao_atual += 1
+            label_correct.config(text=f"Acertou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
+        else:
+            label_correct.config(text=f"Errou Miserável! Sua pontuação atual é de: {pontuacao_atual}")
+        questao_index += 1
+        gerar_questao()
+    else:
+        label_correct.config(text="Escolha uma opção")
+
+
 
 def finalizar_quiz():
     label_question.config(text="CHEGOU AO FIM")
     label_correct.config(text=f"Sua pontuação final foi de: {pontuacao_atual}")
+    btn_submit.pack_forget()
+    btn_new_game.pack()
+    list_options.pack_forget()
+    label_question.pack_forget()
 
 
 #INTERFACE GRÁFICA
@@ -82,19 +101,16 @@ root.resizable(False, False)
 label_title = tk.Label(root, text='Quiz Genial', font=('Helvetica', 16))
 label_title.pack()
 label_question = tk.Label(root, text='Question')
-label_question.pack(pady=10)
-
 list_options = tk.Listbox(root)
-list_options.pack()
 
 btn_submit = tk.Button(root, text='Submit', command=verificar_resposta_correta)
-btn_submit.pack()
 
 label_correct = tk.Label(root)
-label_correct.pack()
 
 
-gerar_questao()
+btn_new_game = tk.Button(root, text='Novo Jogo', command=inicio_jogo)
+
+inicio_jogo()
 root.mainloop()
 
 
