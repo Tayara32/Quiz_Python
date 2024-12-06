@@ -1,5 +1,15 @@
 import sqlite3
 import pandas as pd
+import configparser
+
+# Ler configurações do arquivo ini
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Caminhos obtidos do arquivo ini
+db_path = config['Database']['db_path']
+csv_path = config['Files']['csv_path']
+top_scores_csv = config['Files']['top_scores_csv']
 
 #CONEXÃO AO BANCO DE DADOS
 conn = sqlite3.connect('quiz.db')
@@ -28,8 +38,8 @@ cursor.execute('''
 );
 ''')
 
-#LER CSV E INSERIR DADOS NA TABELA
-dados = pd.read_csv('Docs/quiz-questions.csv')
+# LER CSV E INSERIR DADOS NA TABELA
+dados = pd.read_csv(csv_path)
 dados.to_sql('questions', conn, if_exists='replace', index=False)
 
 #FUNÇÕES
