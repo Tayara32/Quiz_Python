@@ -61,16 +61,22 @@ def inicio_jogo():
     btn_new_game.pack_forget()
     gerar_questao()
     atualizar_temporizador()
+    label_melhores.pack_forget()
+    lista_melhores.pack_forget()
 
 def atualizar_temporizador():
     global temporizador, temporizador_ativo
-    if temporizador > 0 and temporizador_ativo:
+
+    if temporizador == 0:
+        avancar_proxima_questao()
+        return
+
+    if temporizador_ativo:
         label_timer.config(text=f"Segundos restantes: {temporizador}")
         label_timer.pack()
         temporizador -= 1
+
         root.after(1000, atualizar_temporizador)
-    elif temporizador == 0:
-        avancar_proxima_questao()
 
 
 def gerar_questao():
@@ -151,7 +157,18 @@ def guardar_dados():
         label_confirmacao.config(text="Preencha todos os campos!", fg="red")
 
     label_confirmacao.pack()
+    exibir_melhores_scores()
 
+def exibir_melhores_scores():
+    cursor.execute("SELECT name, score FROM users ORDER BY score DESC LIMIT 5")
+    top_utilizadores = cursor.fetchall()
+
+    label_melhores.config(text="TOP 5 Melhores Scores:")
+    lista_melhores.delete(0, tk.END)
+    for i, utilizador in enumerate(top_utilizadores, start=1):
+        lista_melhores.insert(tk.END, f"{i}. {utilizador[0]} - {utilizador[1]} pontos")
+    label_melhores.pack()
+    lista_melhores.pack()
 
 
 #INTERFACE GRÁFICA
@@ -178,6 +195,9 @@ label_pw = tk.Label(root, text='Insira uma password')
 input_pw = tk.Entry(root, show='*')
 btn_guardar = tk.Button(root, text='Guardar', command=guardar_dados)
 label_confirmacao = tk.Label(root)
+
+label_melhores = tk.Label(root, text="TOP 5 Usuários:", font=("Helvetica", 12))
+lista_melhores = tk.Listbox(root)
 
 inicio_jogo()
 root.mainloop()

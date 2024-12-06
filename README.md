@@ -31,4 +31,24 @@ e intuitivas, `sqlite3` para conexão com base de dados, e o `pandas` para leitu
     - Ao finalizar as 10 questões, o quiz termina e permite que o utilizador inicie um novo jogo, com novas perguntas e/ou guarde os seus dados na base de dados.
 
 2. Temporizador
-   - 
+   - Utilizador para controlar o tempo que os utilizadores tem disponível para responder cada pergunta.
+   - O temporizador é implementado através da função `atualizar_temporizador()`, que atualiza a interface gráfica com o tempo, em contagem decrescente, que o utilizador ainda tem disponível.
+   - Quando o tempo atingido for zero a função `avancar_proxima_questao()` é chamada e automaticamente avança para a próxima questão.
+   - As variáveis relacionadas ao temporizador são: `temporizador`, que determina, em segundos, o tempo para cada questão e a variável `temporizador_ativo()` controla se o temporizador esta ativo e a contar o tempo ou inativo.
+   
+3. Base de Dados
+   - As tabelas foram criadas através de comandos `SQL` e executados através do objeto `cursor`.
+   - Foram criadas duas tabelas : `questions` -> armazena as questões, opções e alternativa correta e `users` -> armazena nome, palavra-passe e suas respetivas pontuações.
+   - As questões são carregadas de um arquivo `csv` para a tabela `questions` através do método `to_sql` do pandas.
+   - Foi utilizador o `SQLite` que é uma base de dados que armazena os dados em um único arquivo, nesse caso denominamos `quiz.db`.
+
+4. Lista de melhores Scores
+   - Através da consulta dos 5 melhores utilizadores na tabela `users` na base de dados será exibido um ranking.
+   - Essa consulta irá retornar  um tuplo nome e pontuação, através do método `fetchall` que será armazenado na variável `top_utilizadores`.
+   - A função `exibir_melhores_utilizadores()` será chamada na função `salvar_dados()`para que o resultado seja exibido após inserção do novo utilizador à base de dados.
+
+---
+## Conclusão
+O projeto oferece uma experiência interativa e divertida e demonstra como pode ser feita a integração entre interface gráfica e base de dados. Ao utilizar bibliotecas como `Tkinter`, `sqlite3` e `pandas`, foi possível criar esse jogo de perguntas e respostas, com temporizador e que armazena os dados dos jogadores em uma base de dados. De forma que os alunos puderam melhorar as habildiades em programação Python, desingn de interfaces gráficas e manipulação de dados.
+
+---
