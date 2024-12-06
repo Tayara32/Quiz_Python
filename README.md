@@ -14,6 +14,8 @@ O objetivo principal é compreender e fazer uso das bibliotecas `Tkinter` para c
 e intuitivas, `sqlite3` para conexão com base de dados, e o `pandas` para leituras de ficheiros `.csv`.
 O projeto está estruturado de forma a separar a lógica da base de dados da lógica do jogo, para que a manutenção e escalabilidade
 do código seja facilitada.
+As configurações do projeto estão centralizadas num ficheiro denominado `config.ini`, nomeadamente as configurações da base de dados e informações relevantes como os caminhos dos ficheiros utilizados.
+Para isto, foi utilizada a biblioteca `configparser` que faz a leitura dos ficheiros `.ini`.
 
 ---
 ## Tecnologias Utilizadas
