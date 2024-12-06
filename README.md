@@ -55,6 +55,14 @@ Para isto, foi utilizada a biblioteca `configparser` que faz a leitura dos fiche
    - Os dados obtidos obtidos através da função `exibir_melhores_utilizadores()` são guardados num ficheiro `csv` denominado `top_scores.csv`, que é atualizado sempre que o utilizador guarda os seus dados.
 
 ---
+## Screenshots da Aplicação
+![Ecrã com pergunta e lista de opções](Docs/screenshots/1.png)
+![Ecrã com pergunta e lista de opções com feedback referente à pergunta anterior](Docs/screenshots/2.png)
+![Ecrã de finalização de quiz](Docs/screenshots/3.png)
+![Ecrã com top 5 de melhores scores](Docs/screenshots/4.png)
+
+---
+
 ## Conclusão
 O projeto oferece uma experiência interativa e divertida e demonstra como pode ser feita a integração entre interface gráfica e base de dados. Ao utilizar bibliotecas como `Tkinter`, `sqlite3` e `pandas`, foi possível criar esse jogo de perguntas e respostas, com temporizador e que armazena os dados dos jogadores em uma base de dados. De forma que os alunos puderam melhorar as habildiades em programação Python, design de interfaces gráficas e manipulação de dados.
 
